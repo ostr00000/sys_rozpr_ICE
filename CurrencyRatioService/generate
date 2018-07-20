@@ -1,0 +1,15 @@
+#!/bin/bash
+
+IN_PATH=../bank/src/main/proto
+OUT_PATH=.
+FILE=ratio_service.proto
+PYT=/bin/python
+
+set -x
+$PYT -V
+$PYT -m grpc_tools.protoc \
+    --proto_path=$IN_PATH \
+    --python_out=$OUT_PATH \
+    --grpc_python_out=$OUT_PATH \
+    $FILE
+

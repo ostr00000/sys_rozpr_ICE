@@ -1,0 +1,24 @@
+
+syntax = "proto3";
+
+package exchange_rate;
+
+message WantedCurrencies {
+    string baseCurCode = 1;
+    repeated string wantedCurCodes = 2;
+}
+
+message Ratio {
+    string baseCur = 1;
+    string otherCur = 2;
+    double value = 3;
+}
+
+message CurrenciesRatio {
+    repeated Ratio ratio = 1;
+}
+
+service CurrencyInfo {
+    rpc GetRatio(WantedCurrencies) returns (CurrenciesRatio);
+    rpc UpdateRatio(WantedCurrencies) returns (stream Ratio);
+}

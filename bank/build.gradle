@@ -1,0 +1,76 @@
+group 'lab4.bank'
+version '1.0-SNAPSHOT'
+
+
+apply plugin: 'java'
+apply plugin: 'com.google.protobuf'
+
+sourceCompatibility = 1.8
+
+sourceSets {
+    main {
+        proto {
+            srcDir('src/main/proto')
+        }
+        java {
+            srcDir('src/main/java')
+            srcDir('src/generated/main/java')
+            srcDir('src/generated/main/grpc')
+        }
+    }
+}
+
+
+repositories {
+    mavenCentral()
+}
+
+
+buildscript {
+    repositories {
+        mavenCentral()
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
+    }
+    dependencies {
+        classpath 'com.google.protobuf:protobuf-gradle-plugin:0.8.5'
+        classpath "gradle.plugin.com.zeroc.gradle.ice-builder:slice:1.4.5"
+    }
+}
+apply plugin: "com.zeroc.gradle.ice-builder.slice"
+
+
+dependencies {
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+    compile 'io.grpc:grpc-netty:1.11.0'
+    compile 'io.grpc:grpc-protobuf:1.11.0'
+    compile 'io.grpc:grpc-stub:1.11.0'
+    compile 'com.zeroc:ice:3.7.1'
+}
+
+
+protobuf {
+    protoc {
+        // The version of protoc must match protobuf-java. If you don't depend on
+        // protobuf-java directly, you will be transitively depending on the
+        // protobuf-java version that grpc depends on.
+        artifact = "com.google.protobuf:protoc:3.0.0-beta-2"
+    }
+    plugins {
+        grpc {
+            artifact = 'io.grpc:protoc-gen-grpc-java:0.13.1'
+        }
+    }
+    generateProtoTasks {
+        all()*.plugins {
+            grpc {}
+        }
+    }
+    generatedFilesBaseDir = "$projectDir/src/generated"
+}
+
+slice {
+    output = file("$projectDir/src/generated/main/java")
+}
+
